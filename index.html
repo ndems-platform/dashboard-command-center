@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ศูนย์รับแจ้งเหตุและสั่งการ (Command Center)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@turf/turf@6/turf.min.js"></script>
+    <style>
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            background-color: #f8fafc;
+            /* Slate 50 */
+            color: #1e293b;
+            /* Slate 800 */
+            font-family: 'Prompt', sans-serif;
+            overflow: hidden;
+        }
+
+        #map {
+            height: 100vh;
+            width: 100%;
+            z-index: 1;
+        }
+
+        .header {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 15px 25px;
+            border-radius: 12px;
+            border: 1px solid #cbd5e1;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 1.5rem;
+            color: #0f172a;
+            /* Slate 900 */
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .header p {
+            margin: 5px 0 0;
+            font-size: 0.9rem;
+            color: #64748b;
+        }
+
+
+
+        /* Custom Marker Styles */
+        .blinking-marker {
+            background-color: #ef4444;
+            /* Red 500 */
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            border: 2px solid #fff;
+            box-shadow: 0 0 0 rgba(239, 68, 68, 0.4);
+            animation: pulse 2s infinite;
+        }
+
+        .marker-pin {
+            width: 30px;
+            height: 30px;
+            border-radius: 50% 50% 50% 0;
+            background: #ef4444;
+            position: absolute;
+            transform: rotate(-45deg);
+            left: 50%;
+            top: 50%;
+            margin: -15px 0 0 -15px;
+            box-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
+        }
+
+        .marker-pin::after {
+            content: '';
+            width: 14px;
+            height: 14px;
+            margin: 8px 0 0 8px;
+            background: #fff;
+            position: absolute;
+            border-radius: 50%;
+        }
+
+        .custom-div-icon {
+            background: none;
+            border: none;
+        }
+
+        .custom-div-icon i {
+            position: absolute;
+            width: 22px;
+            height: 22px;
+            left: 0;
+            right: 0;
+            margin: 10px auto;
+            text-align: center;
+            font-size: 12px;
+            /* icon size */
+            color: white;
+            /* icon color */
+            padding-top: 5px;
+            /* adjust to center */
+            z-index: 100;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+            }
+
+            70% {
+                box-shadow: 0 0 0 15px rgba(239, 68, 68, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+            }
+        }
+
+        @keyframes pulse-blue {
+            0% {
+                box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7);
+            }
+
+            70% {
+                box-shadow: 0 0 0 15px rgba(59, 130, 246, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
+            }
+        }
+
+
+        /* Warning Popup */
+        .leaflet-popup-content-wrapper {
+            background: rgba(255, 255, 255, 0.95);
+            color: #1e293b;
+            border-radius: 8px;
+            border: 1px solid #cbd5e1;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .leaflet-popup-tip {
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid #cbd5e1;
+            border-top: none;
+            border-left: none;
+        }
+
+        .info-row {
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+        }
+
+        .info-label {
+            color: #64748b;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .info-value {
+            color: #0f172a;
+        }
+
+        .legend {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #cbd5e1;
+            z-index: 1000;
+            font-size: 0.85rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+
+        .legend-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        .legend-dot.high {
+            background: #ef4444;
+            box-shadow: 0 0 5px #ef4444;
+        }
+
+
+
+        .legend-dot.rnis {
+            background: #fbbf24;
+            /* Amber 400 - Gold/Yellow for RNIS */
+            box-shadow: 0 0 5px #fbbf24;
+        }
+
+        .legend-dot.basic {
+            background: #3b82f6;
+            box-shadow: 0 0 5px #3b82f6;
+        }
+
+        .legend-dot {
+            width: 20px;
+            height: 20px;
+        }
+
+        .legend-item {
+            cursor: pointer;
+            transition: opacity 0.3s;
+        }
+
+        .legend-item:hover {
+            opacity: 0.8;
+        }
+
+        .legend-item.inactive {
+            opacity: 0.4;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="header">
+        <h1>หน่วยปฏิบัติการอำนวยการ</h1>
+    </div>
+
+    <div id="map"></div>
+
+    <div class="legend">
+        <div style="margin-bottom: 8px; font-weight: 600; color: #334155;">ระดับหน่วยปฏิบัติการ (กดเพื่อกรอง)</div>
+
+        <div class="legend-item" onclick="toggleLayer('rnis', this)">
+            <div class="legend-dot rnis" style="display: flex; align-items: center; justify-content: center;"><i
+                    class="fa-solid fa-crown" style="font-size: 10px; color: white;"></i></div>
+            <span>ยกระดับหน่วยปฏิบัติการ (RNIS) - <span id="count-rnis"></span></span>
+        </div>
+        <div class="legend-item" onclick="toggleLayer('high', this)">
+            <div class="legend-dot high" style="display: flex; align-items: center; justify-content: center;"><i
+                    class="fa-solid fa-headset" style="font-size: 10px; color: white;"></i></div>
+            <span>ระดับสูง (Advance) - <span id="count-high"></span></span>
+        </div>
+        <div class="legend-item" onclick="toggleLayer('basic', this)">
+            <div class="legend-dot basic" style="display: flex; align-items: center; justify-content: center;"><i
+                    class="fa-solid fa-headset" style="font-size: 10px; color: white;"></i></div>
+            <span>ระดับพื้นฐาน (Basic) - <span id="count-basic"></span></span>
+        </div>
+    </div>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="command-centers.js"></script>
+    <script>
+        ;
+
+        // Initialize Map centered on Thailand
+        const map = L.map('map', {
+            zoomControl: false,
+            attributionControl: false,
+            maxBounds: [
+                [5.0, 97.0],  // Southwest corner
+                [21.0, 106.0] // Northeast corner
+            ],
+            minZoom: 5,
+            maxBoundsViscosity: 1.0
+        }).setView([13.736717, 100.523186], 6);
+
+        L.control.zoom({
+            position: 'bottomright'
+        }).addTo(map);
+
+        // Light Theme Base Map (CartoDB Positron)
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+            subdomains: 'abcd',
+            maxZoom: 19
+        }).addTo(map);
+
+        // Load Thailand Provinces GeoJSON
+        fetch('https://raw.githubusercontent.com/chingchai/OpenGISData-Thailand/master/provinces.geojson')
+            .then(response => response.json())
+            .then(data => {
+
+                // 1. Calculate Union of all provinces to get Thailand outline
+                // This might take a moment, but for ~77 provinces it should be fast enough.
+                let thailandUnion = data.features[0];
+                for (let i = 1; i < data.features.length; i++) {
+                    thailandUnion = turf.union(thailandUnion, data.features[i]);
+                }
+
+                // 2. Create a "World Mask" (World Polygon minus Thailand Union)
+                const worldPolygon = turf.polygon([[
+                    [-180, 90],
+                    [-180, -90],
+                    [180, -90],
+                    [180, 90],
+                    [-180, 90]
+                ]]);
+
+                const mask = turf.difference(worldPolygon, thailandUnion);
+
+                // 3. Add Mask Layer (White cover for everything else)
+                L.geoJSON(mask, {
+                    style: {
+                        color: 'transparent',
+                        fillColor: '#ffffff', // White mask
+                        fillOpacity: 0.8,    // 0.8 opacity to dim the world
+                        weight: 0
+                    }
+                }).addTo(map);
+
+                // 4. Add Province Borders (On top of mask? No, mask is around it. Provinces are inside holes.)
+                // Actually we just add provinces normally for the borders.
+                L.geoJSON(data, {
+                    style: function (feature) {
+                        return {
+                            color: '#64748b',
+                            weight: 1,
+                            opacity: 0.5,
+                            fillColor: 'transparent', // No fill needed as tiles show through
+                            fillOpacity: 0
+                        };
+                    },
+                    onEachFeature: function (feature, layer) {
+                        layer.on({
+                            mouseover: function (e) {
+                                var layer = e.target;
+                                layer.setStyle({
+                                    weight: 2,
+                                    color: '#0ea5e9',
+                                    fillOpacity: 0.1
+                                });
+                            },
+                            mouseout: function (e) {
+                                L.geoJSON(data).resetStyle(e.target);
+                                // Proper reset manually since we have custom base style
+                                layer.setStyle({
+                                    color: '#64748b',
+                                    weight: 1,
+                                    opacity: 0.5,
+                                    fillOpacity: 0
+                                });
+                            }
+                        });
+                    }
+                }).addTo(map);
+            })
+            .catch(error => console.error('Error loading GeoJSON:', error));
+
+
+        // Layer Groups for Filtering
+        const layers = {
+            'rnis': L.layerGroup().addTo(map),
+            'high': L.layerGroup().addTo(map),
+            'basic': L.layerGroup().addTo(map)
+        };
+
+        // Function to Toggle Layers
+        function toggleLayer(level, element) {
+            if (map.hasLayer(layers[level])) {
+                map.removeLayer(layers[level]);
+                element.classList.add('inactive');
+            } else {
+                map.addLayer(layers[level]);
+                element.classList.remove('inactive');
+            }
+        }
+
+        // Command Center Data is loaded from command-centers.js
+        if (typeof commandCenters !== 'undefined' && Array.isArray(commandCenters)) {
+            let countRNIS = 0;
+            let countHigh = 0;
+            let countBasic = 0;
+
+            commandCenters.forEach(center => {
+                if (center.lat && center.lng) {
+
+                    // Count Logic
+                    if (center.rnis) {
+                        countRNIS++;
+                    } else if (center.level && center.level.includes('ระดับสูง')) {
+                        countHigh++;
+                    } else {
+                        countBasic++;
+                    }
+
+                    // Determine Level, Color, and Group
+                    let color = '#3b82f6'; // Default Basic (Blue)
+                    let animationName = 'pulse-blue'; // Default Basic Pulse
+                    let targetLayer = layers['basic'];
+
+                    if (center.level) {
+                        if (center.rnis) {
+                            // RNIS overwrites everything else regarding layer group
+                            targetLayer = layers['rnis'];
+                            // Keep basic color/pulse unless high?
+                            // Logic: If explicitly High, use Red. Else Blue.
+                            if (center.level.includes('ระดับสูง')) {
+                                color = '#ef4444';
+                                animationName = 'pulse'; // Red
+                            }
+                        } else if (center.level.includes('ระดับสูง')) {
+                            color = '#ef4444'; // High (Red)
+                            animationName = 'pulse'; // Red
+                            targetLayer = layers['high'];
+                        }
+                    }
+
+                    const animationStyle = `animation: ${animationName} 2s infinite;`;
+
+                    let crownIcon = '';
+                    if (center.rnis) {
+                        crownIcon = `<i class="fa-solid fa-crown" style="
+                            position: absolute;
+                            top: -26px;
+                            left: 50%;
+                            transform: translateX(-50%);
+                            color: #fbbf24; 
+                            font-size: 16px; 
+                            text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+                            z-index: 200;
+                        "></i>`;
+                    }
+
+                    const iconHtml = `<div style="position: relative;">
+                        ${crownIcon}
+                        <div style="
+                            width: 24px;
+                            height: 24px;
+                            background: ${color};
+                            border-radius: 50%;
+                            border: 2px solid #fff;
+                            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            color: white;
+                            font-size: 14px;
+                            ${animationStyle}">
+                            <i class="fa-solid fa-headset"></i>
+                        </div>
+                    </div>`;
+
+                    const customIcon = L.divIcon({
+                        className: 'custom-div-icon',
+                        html: iconHtml,
+                        iconSize: [28, 28],
+                        iconAnchor: [14, 14]
+                    });
+
+                    const marker = L.marker([center.lat, center.lng], { icon: customIcon });
+
+                    const popupContent = `
+                        <div style="min-width: 200px;">
+                            <h3 style="margin: 0 0 10px; color: ${color}; font-size: 1.1rem; border-bottom: 1px solid #cbd5e1; padding-bottom: 5px;">
+                                ${center.name}
+                            </h3>
+                            <div class="info-row">
+                                <span class="info-label">จังหวัด:</span> <span class="info-value">${center.province}</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">ประเภท:</span> <span class="info-value">${center.type}</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="info-label">ระดับ:</span> <span class="info-value">${center.level}</span>
+                            </div>
+                            <div style="margin-top: 10px; font-size: 0.8rem; text-align: right; color: #64748b;">
+                                ID: ${center.id || 'N/A'}
+                            </div>
+                        </div>
+                    `;
+
+                    marker.bindPopup(popupContent);
+                    targetLayer.addLayer(marker);
+                }
+            });
+
+            // Update Legend Counts
+            document.getElementById('count-rnis').innerText = `(${countRNIS})`;
+            document.getElementById('count-high').innerText = `(${countHigh})`;
+            document.getElementById('count-basic').innerText = `(${countBasic})`;
+        }
+
+
+    </script>
+</body>
+
+</html>
