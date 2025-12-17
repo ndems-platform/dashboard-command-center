@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ศูนย์รับแจ้งเหตุและสั่งการ (Command Center)</title>
+    <title>หน่วยปฏิบัติการอำนวยการ</title>
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="icon" type="image/png" href="favicon.png">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -16,10 +16,10 @@
             margin: 0;
             padding: 0;
             height: 100%;
-            background-color: #f8fafc;
-            /* Slate 50 */
-            color: #1e293b;
-            /* Slate 800 */
+            background-color: #f1f5f9;
+            /* Slate 100 */
+            color: #334155;
+            /* Slate 700 */
             font-family: 'Prompt', sans-serif;
             overflow: hidden;
         }
@@ -35,30 +35,45 @@
             top: 20px;
             left: 20px;
             z-index: 1000;
-            background: rgba(255, 255, 255, 0.9);
-            padding: 15px 25px;
-            border-radius: 12px;
-            border: 1px solid #cbd5e1;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px 20px;
+            border-radius: 16px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            backdrop-filter: blur(12px);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border-left: 5px solid #1a365d;
+            /* NIEMS Navy Blue */
+            max-width: 400px;
+        }
+
+        .header img {
+            height: 50px;
+            width: auto;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+        }
+
+        .header-text {
+            display: flex;
+            flex-direction: column;
         }
 
         .header h1 {
             margin: 0;
-            font-size: 1.5rem;
-            color: #0f172a;
-            /* Slate 900 */
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            font-size: 1.1rem;
+            color: #1a365d;
+            /* NIEMS Navy Blue */
+            font-weight: 600;
+            line-height: 1.2;
         }
 
         .header p {
-            margin: 5px 0 0;
-            font-size: 0.9rem;
+            margin: 2px 0 0;
+            font-size: 0.8rem;
             color: #64748b;
+            font-weight: 300;
         }
-
-
 
         /* Custom Marker Styles */
         .blinking-marker {
@@ -148,95 +163,179 @@
 
         /* Warning Popup */
         .leaflet-popup-content-wrapper {
-            background: rgba(255, 255, 255, 0.95);
-            color: #1e293b;
-            border-radius: 8px;
-            border: 1px solid #cbd5e1;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.98);
+            color: #334155;
+            border-radius: 12px;
+            border: none;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            font-family: 'Prompt', sans-serif;
         }
 
         .leaflet-popup-tip {
-            background: rgba(255, 255, 255, 0.95);
-            border: 1px solid #cbd5e1;
-            border-top: none;
-            border-left: none;
+            background: rgba(255, 255, 255, 0.98);
+        }
+
+        .leaflet-popup-content {
+            margin: 14px;
         }
 
         .info-row {
-            margin-bottom: 5px;
+            margin-bottom: 6px;
             font-size: 0.9rem;
+            display: flex;
+            justify-content: space-between;
         }
 
         .info-label {
             color: #64748b;
-            font-size: 0.8rem;
-            font-weight: 600;
+            font-size: 0.85rem;
+            font-weight: 500;
         }
 
         .info-value {
-            color: #0f172a;
+            color: #1a365d;
+            font-weight: 500;
         }
 
         .legend {
             position: absolute;
             top: 20px;
             right: 20px;
-            background: rgba(255, 255, 255, 0.9);
-            padding: 15px;
-            border-radius: 8px;
-            border: 1px solid #cbd5e1;
+            background: rgba(255, 255, 255, 0.98);
+            padding: 20px;
+            border-radius: 20px;
             z-index: 1000;
             font-size: 0.85rem;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            width: 300px;
         }
 
-        .legend-item {
+        .legend-title {
+            margin-bottom: 15px;
+            font-weight: 600;
+            color: #1a365d;
+            font-size: 1rem;
+            text-align: center;
+            letter-spacing: 0.5px;
+        }
+
+        .legend-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .filter-btn {
             display: flex;
             align-items: center;
-            margin-bottom: 5px;
-        }
-
-        .legend-dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            margin-right: 10px;
-        }
-
-        .legend-dot.high {
-            background: #ef4444;
-            box-shadow: 0 0 5px #ef4444;
-        }
-
-
-
-        .legend-dot.rnis {
-            background: #fbbf24;
-            /* Amber 400 - Gold/Yellow for RNIS */
-            box-shadow: 0 0 5px #fbbf24;
-        }
-
-        .legend-dot.basic {
-            background: #3b82f6;
-            box-shadow: 0 0 5px #3b82f6;
-        }
-
-        .legend-dot {
-            width: 20px;
-            height: 20px;
-        }
-
-        .legend-item {
+            justify-content: space-between;
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 10px 12px;
             cursor: pointer;
-            transition: opacity 0.3s;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            user-select: none;
         }
 
-        .legend-item:hover {
+        .filter-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border-color: #cbd5e1;
+        }
+
+        .filter-btn.active {
+            border-color: currentColor;
+            transform: translateY(-1px);
+            font-weight: 600;
+        }
+
+        .filter-btn.active.rnis {
+            background-color: #fff7ed;
+            /* Amber 50 */
+            color: #b45309;
+            /* Amber 700 */
+            border: 2px solid #fcd34d;
+            /* Amber 300 */
+        }
+
+        .filter-btn.active.high {
+            background-color: #fef2f2;
+            /* Red 50 */
+            color: #b91c1c;
+            /* Red 700 */
+            border: 2px solid #fca5a5;
+            /* Red 300 */
+        }
+
+        .filter-btn.active.basic {
+            background-color: #eff6ff;
+            /* Blue 50 */
+            color: #1d4ed8;
+            /* Blue 700 */
+            border: 2px solid #93c5fd;
+            /* Blue 300 */
+        }
+
+        .btn-content {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-icon {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: #cbd5e1;
+            transition: all 0.3s;
+            border: 1px solid #e2e8f0;
+        }
+
+        .filter-btn.active .btn-icon {
+            border-color: transparent;
+        }
+
+        /* Icon styling to match the active state text color or distinct */
+        .filter-btn.active.rnis .btn-icon {
+            background: #d97706;
+            color: white;
+        }
+
+        .filter-btn.active.high .btn-icon {
+            background: #ef4444;
+            color: white;
+        }
+
+        .filter-btn.active.basic .btn-icon {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .btn-label {
+            font-size: 0.9rem;
+        }
+
+        .btn-count {
+            background: #f1f5f9;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #64748b;
+        }
+
+        .filter-btn.active .btn-count {
+            background: white;
+            color: currentColor;
             opacity: 0.8;
-        }
-
-        .legend-item.inactive {
-            opacity: 0.4;
         }
     </style>
 </head>
@@ -244,28 +343,41 @@
 <body>
 
     <div class="header">
-        <h1>หน่วยปฏิบัติการอำนวยการ</h1>
+        <img src="logo-200.png" alt="NIEMS Logo">
+        <div class="header-text">
+            <h1>หน่วยปฏิบัติการอำนวยการ</h1>
+            <p>สถาบันการแพทย์ฉุกเฉินแห่งชาติ (สพฉ.)</p>
+        </div>
     </div>
 
     <div id="map"></div>
 
     <div class="legend">
-        <div style="margin-bottom: 8px; font-weight: 600; color: #334155;">ระดับหน่วยปฏิบัติการ (กดเพื่อกรอง)</div>
+        <div class="legend-title">ระดับหน่วยปฏิบัติการอำนวยการ</div>
+        <div class="legend-grid">
+            <div class="filter-btn active rnis" onclick="toggleLayer('rnis', this)">
+                <div class="btn-content">
+                    <div class="btn-icon"><i class="fa-solid fa-crown"></i></div>
+                    <span class="btn-label">ยกระดับ</span>
+                </div>
+                <span class="btn-count" id="count-rnis">0</span>
+            </div>
 
-        <div class="legend-item" onclick="toggleLayer('rnis', this)">
-            <div class="legend-dot rnis" style="display: flex; align-items: center; justify-content: center;"><i
-                    class="fa-solid fa-crown" style="font-size: 10px; color: white;"></i></div>
-            <span>ยกระดับหน่วยปฏิบัติการ (RNIS) - <span id="count-rnis"></span></span>
-        </div>
-        <div class="legend-item" onclick="toggleLayer('high', this)">
-            <div class="legend-dot high" style="display: flex; align-items: center; justify-content: center;"><i
-                    class="fa-solid fa-headset" style="font-size: 10px; color: white;"></i></div>
-            <span>ระดับสูง (Advance) - <span id="count-high"></span></span>
-        </div>
-        <div class="legend-item" onclick="toggleLayer('basic', this)">
-            <div class="legend-dot basic" style="display: flex; align-items: center; justify-content: center;"><i
-                    class="fa-solid fa-headset" style="font-size: 10px; color: white;"></i></div>
-            <span>ระดับพื้นฐาน (Basic) - <span id="count-basic"></span></span>
+            <div class="filter-btn active high" onclick="toggleLayer('high', this)">
+                <div class="btn-content">
+                    <div class="btn-icon"><i class="fa-solid fa-headset"></i></div>
+                    <span class="btn-label">ระดับสูง</span>
+                </div>
+                <span class="btn-count" id="count-high">0</span>
+            </div>
+
+            <div class="filter-btn active basic" onclick="toggleLayer('basic', this)">
+                <div class="btn-content">
+                    <div class="btn-icon"><i class="fa-solid fa-headset"></i></div>
+                    <span class="btn-label">พื้นฐาน</span>
+                </div>
+                <span class="btn-count" id="count-basic">0</span>
+            </div>
         </div>
     </div>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -377,12 +489,15 @@
 
         // Function to Toggle Layers
         function toggleLayer(level, element) {
-            if (map.hasLayer(layers[level])) {
+            // Check current state by class because we are using active class for styling
+            const isActive = element.classList.contains('active');
+
+            if (isActive) {
                 map.removeLayer(layers[level]);
-                element.classList.add('inactive');
+                element.classList.remove('active');
             } else {
                 map.addLayer(layers[level]);
-                element.classList.remove('inactive');
+                element.classList.add('active');
             }
         }
 
@@ -496,9 +611,9 @@
             });
 
             // Update Legend Counts
-            document.getElementById('count-rnis').innerText = `(${countRNIS})`;
-            document.getElementById('count-high').innerText = `(${countHigh})`;
-            document.getElementById('count-basic').innerText = `(${countBasic})`;
+            document.getElementById('count-rnis').innerText = `${countRNIS}`;
+            document.getElementById('count-high').innerText = `${countHigh}`;
+            document.getElementById('count-basic').innerText = `${countBasic}`;
         }
 
 
