@@ -637,7 +637,8 @@
     <div class="legend">
         <div class="legend-title">
             ระดับหน่วยปฏิบัติการอำนวยการ
-            <div class="info-btn" onclick="openModal()" title="เปรียบเทียบขีดความสามารถ">
+            <div class="info-btn" onclick="openModal()" title="ความสามารถของ NDEMS ณ
+                    ศูนย์สั่งการที่ยกระดับ">
                 <i class="fa-solid fa-info"></i>
             </div>
         </div>
@@ -690,7 +691,8 @@
     <div class="modal-overlay" id="comparisonModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2><i class="fa-solid fa-layer-group" style="color: #d4a32f;"></i> เปรียบเทียบขีดความสามารถ</h2>
+                <h2><i class="fa-solid fa-layer-group" style="color: #d4a32f;"></i> ความสามารถของ NDEMS ณ
+                    ศูนย์สั่งการที่ยกระดับ</h2>
                 <button class="close-btn" onclick="closeModal()">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
@@ -698,9 +700,9 @@
             <table class="comparison-table">
                 <thead>
                     <tr>
-                        <th>คุณสมบัติ</th>
-                        <th><span class="tag-digital">ยกระดับดิจิทัล</span></th>
-                        <th><span class="tag-general">ระดับทั่วไป</span></th>
+                        <th>ฟังก์ชันการทำงาน</th>
+                        <th><span class="tag-digital">ศูนย์สั่งการที่ยกระดับ</span></th>
+                        <th><span class="tag-general">ศูนย์สั่งการที่ยังไม่ยกระดับ</span></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -715,7 +717,7 @@
                         <td><i class="fa-solid fa-circle-xmark cross-icon"></i></td>
                     </tr>
                     <tr>
-                        <td>3. เชื่อมต่อระบบแจ้ง (RNIS) กับระบบบันทึกข้อมูลอัตโนมัติ (EMS Portal)</td>
+                        <td>3. เชื่อมต่อระบบแจ้ง (RNIS) กับระบบบันทึกข้อมูลสั่งการ (EMS Portal) อัตโนมัติ </td>
                         <td><i class="fa-solid fa-circle-check check-icon"></i></td>
                         <td><i class="fa-solid fa-circle-xmark cross-icon"></i></td>
                     </tr>
@@ -1002,6 +1004,11 @@
                     // 3. Create and Bind Marker
                     const marker = L.marker([center.lat, center.lng], { icon: customIcon });
 
+                    const branchRow = center.branch ? `
+                        <div class="info-row">
+                            <span class="info-label">สาขา:</span> <span class="info-value">${center.branch}</span>
+                        </div>` : '';
+
                     const popupContent = `
                         <div style="min-width: 200px;">
                             <h3 style="margin: 0 0 10px; color: ${color}; font-size: 1.1rem; border-bottom: 1px solid #cbd5e1; padding-bottom: 5px;">
@@ -1016,6 +1023,7 @@
                             <div class="info-row">
                                 <span class="info-label">ระดับ:</span> <span class="info-value">${center.level}</span>
                             </div>
+                            ${branchRow}
                         </div>
                     `;
 
