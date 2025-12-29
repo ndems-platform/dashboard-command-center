@@ -146,31 +146,45 @@
             }
         }
 
-        @keyframes pulse-gray {
+        @keyframes pulse-gold {
             0% {
-                box-shadow: 0 0 0 0 rgba(148, 163, 184, 0.7);
+                box-shadow: 0 0 0 0 rgba(212, 163, 47, 0.7);
             }
 
             70% {
-                box-shadow: 0 0 0 15px rgba(148, 163, 184, 0);
+                box-shadow: 0 0 0 15px rgba(212, 163, 47, 0);
             }
 
             100% {
-                box-shadow: 0 0 0 0 rgba(148, 163, 184, 0);
+                box-shadow: 0 0 0 0 rgba(212, 163, 47, 0);
             }
         }
 
-        @keyframes pulse-green {
+        @keyframes pulse-red {
             0% {
-                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
             }
 
             70% {
-                box-shadow: 0 0 0 15px rgba(16, 185, 129, 0);
+                box-shadow: 0 0 0 15px rgba(239, 68, 68, 0);
             }
 
             100% {
-                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+            }
+        }
+
+        @keyframes pulse-blue {
+            0% {
+                box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.7);
+            }
+
+            70% {
+                box-shadow: 0 0 0 15px rgba(37, 99, 235, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(37, 99, 235, 0);
             }
         }
 
@@ -328,21 +342,33 @@
 
         /* Icon styling to match the active state text color or distinct */
         .filter-btn.active.rnis {
-            background-color: #ecfdf5;
-            color: #065f46;
-            border: 2px solid #10b981;
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+            background-color: #fefce8;
+            color: #854d0e;
+            border: 2px solid #d4a32f;
+            box-shadow: 0 4px 12px rgba(212, 163, 47, 0.2);
         }
 
         .filter-btn.active.rnis .btn-icon {
-            background: #10b981 !important;
+            background: #d4a32f !important;
             color: white;
             border: 2px solid white;
         }
 
+        .filter-btn.active.high {
+            background-color: #fef2f2;
+            color: #991b1b;
+            border: 2px solid #ef4444;
+        }
+
         .filter-btn.active.high .btn-icon {
-            background: #2563eb !important;
+            background: #ef4444 !important;
             border: 2px solid white;
+        }
+
+        .filter-btn.active.basic {
+            background-color: #eff6ff;
+            color: #1e40af;
+            border: 2px solid #2563eb;
         }
 
         .filter-btn.active.basic .btn-icon {
@@ -573,14 +599,14 @@
 
                     if (center.level) {
                         if (center.rnis) {
-                            // RNIS is Green for high visibility
+                            // RNIS is Gold
                             targetLayer = layers['rnis'];
-                            color = '#10b981';
-                            animationName = 'pulse-green';
+                            color = '#d4a32f';
+                            animationName = 'pulse-gold';
                         } else if (center.level.includes('ระดับสูง')) {
                             targetLayer = layers['high'];
-                            color = '#2563eb';
-                            animationName = 'pulse-blue';
+                            color = '#ef4444';
+                            animationName = 'pulse-red';
                         } else {
                             color = '#2563eb';
                             animationName = 'pulse-blue';
@@ -610,13 +636,8 @@
 
                     if (!center.rnis) {
                         innerIcon = `<img src="telephone.png" style="width: ${iconSize}px; height: ${iconSize}px; object-fit: contain; filter: brightness(0) invert(1);">`;
-                        bgColor = '#2563eb';
-                        iconBorderColor = '#fff';
                     } else {
-                        // Green for RNIS
                         innerIcon = `<img src="headset.png" style="width: ${iconSize}px; height: ${iconSize}px; object-fit: contain; filter: brightness(0) invert(1);">`;
-                        bgColor = '#10b981';
-                        iconBorderColor = '#fff';
                     }
 
                     const iconHtml = `<div style="position: relative;">
@@ -624,9 +645,9 @@
                         <div style="
                             width: 24px;
                             height: 24px;
-                            background: ${bgColor};
+                            background: ${color};
                             border-radius: 50%;
-                            border: 2px solid ${iconBorderColor};
+                            border: 2px solid #fff;
                             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
                             display: flex;
                             align-items: center;
