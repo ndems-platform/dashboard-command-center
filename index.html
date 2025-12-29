@@ -146,17 +146,31 @@
             }
         }
 
-        @keyframes pulse-blue {
+        @keyframes pulse-gray {
             0% {
-                box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7);
+                box-shadow: 0 0 0 0 rgba(148, 163, 184, 0.7);
             }
 
             70% {
-                box-shadow: 0 0 0 15px rgba(59, 130, 246, 0);
+                box-shadow: 0 0 0 15px rgba(148, 163, 184, 0);
             }
 
             100% {
-                box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
+                box-shadow: 0 0 0 0 rgba(148, 163, 184, 0);
+            }
+        }
+
+        @keyframes pulse-green {
+            0% {
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+            }
+
+            70% {
+                box-shadow: 0 0 0 15px rgba(16, 185, 129, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
             }
         }
 
@@ -253,30 +267,30 @@
         }
 
         .filter-btn.active.rnis {
-            background-color: #fff7ed;
-            /* Amber 50 */
-            color: #b45309;
-            /* Amber 700 */
-            border: 2px solid #fcd34d;
-            /* Amber 300 */
-        }
-
-        .filter-btn.active.high {
-            background-color: #fef2f2;
-            /* Red 50 */
-            color: #b91c1c;
-            /* Red 700 */
-            border: 2px solid #fca5a5;
-            /* Red 300 */
-        }
-
-        .filter-btn.active.basic {
             background-color: #eff6ff;
             /* Blue 50 */
             color: #1d4ed8;
             /* Blue 700 */
             border: 2px solid #93c5fd;
             /* Blue 300 */
+        }
+
+        .filter-btn.active.high {
+            background-color: #f8fafc;
+            /* Slate 50 */
+            color: #475569;
+            /* Slate 600 */
+            border: 2px solid #cbd5e1;
+            /* Slate 300 */
+        }
+
+        .filter-btn.active.basic {
+            background-color: #f8fafc;
+            /* Slate 50 */
+            color: #475569;
+            /* Slate 600 */
+            border: 2px solid #cbd5e1;
+            /* Slate 300 */
         }
 
         .btn-content {
@@ -297,6 +311,15 @@
             color: #cbd5e1;
             transition: all 0.3s;
             border: 1px solid #e2e8f0;
+            position: relative;
+            /* For crown overlap */
+            overflow: visible;
+        }
+
+        .btn-icon img {
+            width: 18px;
+            height: 18px;
+            object-fit: contain;
         }
 
         .filter-btn.active .btn-icon {
@@ -304,19 +327,32 @@
         }
 
         /* Icon styling to match the active state text color or distinct */
+        .filter-btn.active.rnis {
+            background-color: #ecfdf5;
+            color: #065f46;
+            border: 2px solid #10b981;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+        }
+
         .filter-btn.active.rnis .btn-icon {
-            background: #d97706;
+            background: #10b981 !important;
             color: white;
+            border: 2px solid white;
         }
 
         .filter-btn.active.high .btn-icon {
-            background: #ef4444;
-            color: white;
+            background: #2563eb !important;
+            border: 2px solid white;
         }
 
         .filter-btn.active.basic .btn-icon {
-            background: #3b82f6;
-            color: white;
+            background: #2563eb !important;
+            border: 2px solid white;
+        }
+
+        .btn-icon img.telephone-icon,
+        .btn-icon img.headset-icon {
+            filter: brightness(0) invert(1);
         }
 
         .btn-label {
@@ -357,15 +393,26 @@
         <div class="legend-grid">
             <div class="filter-btn active rnis" onclick="toggleLayer('rnis', this)">
                 <div class="btn-content">
-                    <div class="btn-icon"><i class="fa-solid fa-crown"></i></div>
-                    <span class="btn-label">ยกระดับ</span>
+                    <div class="btn-icon">
+                        <img src="headset.png" alt="Headset" class="headset-icon">
+                        <i class="fa-solid fa-crown" style="
+                            position: absolute;
+                            top: -12px;
+                            left: 50%;
+                            transform: translateX(-50%);
+                            color: #fbbf24;
+                            font-size: 14px;
+                            text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+                        "></i>
+                    </div>
+                    <span class="btn-label">ยกระดับเป็นดิจิทัล</span>
                 </div>
                 <span class="btn-count" id="count-rnis">0</span>
             </div>
 
             <div class="filter-btn active high" onclick="toggleLayer('high', this)">
                 <div class="btn-content">
-                    <div class="btn-icon"><i class="fa-solid fa-headset"></i></div>
+                    <div class="btn-icon"><img src="telephone.png" alt="Telephone" class="telephone-icon"></div>
                     <span class="btn-label">ระดับสูง</span>
                 </div>
                 <span class="btn-count" id="count-high">0</span>
@@ -373,8 +420,8 @@
 
             <div class="filter-btn active basic" onclick="toggleLayer('basic', this)">
                 <div class="btn-content">
-                    <div class="btn-icon"><i class="fa-solid fa-headset"></i></div>
-                    <span class="btn-label">พื้นฐาน</span>
+                    <div class="btn-icon"><img src="telephone.png" alt="Telephone" class="telephone-icon"></div>
+                    <span class="btn-label">ระดับพื้นฐาน</span>
                 </div>
                 <span class="btn-count" id="count-basic">0</span>
             </div>
@@ -520,24 +567,23 @@
                     }
 
                     // Determine Level, Color, and Group
-                    let color = '#3b82f6'; // Default Basic (Blue)
-                    let animationName = 'pulse-blue'; // Default Basic Pulse
+                    let color = '#000000'; // Black for Basic/High borders
+                    let animationName = 'pulse-gray';
                     let targetLayer = layers['basic'];
 
                     if (center.level) {
                         if (center.rnis) {
-                            // RNIS overwrites everything else regarding layer group
+                            // RNIS is Green for high visibility
                             targetLayer = layers['rnis'];
-                            // Keep basic color/pulse unless high?
-                            // Logic: If explicitly High, use Red. Else Blue.
-                            if (center.level.includes('ระดับสูง')) {
-                                color = '#ef4444';
-                                animationName = 'pulse'; // Red
-                            }
+                            color = '#10b981';
+                            animationName = 'pulse-green';
                         } else if (center.level.includes('ระดับสูง')) {
-                            color = '#ef4444'; // High (Red)
-                            animationName = 'pulse'; // Red
                             targetLayer = layers['high'];
+                            color = '#2563eb';
+                            animationName = 'pulse-blue';
+                        } else {
+                            color = '#2563eb';
+                            animationName = 'pulse-blue';
                         }
                     }
 
@@ -557,14 +603,30 @@
                         "></i>`;
                     }
 
+                    let iconSize = 14;
+                    let innerIcon = `<img src="headset.png" style="width: ${iconSize}px; height: ${iconSize}px; object-fit: contain;">`;
+                    let bgColor = color;
+                    let iconBorderColor = '#fff';
+
+                    if (!center.rnis) {
+                        innerIcon = `<img src="telephone.png" style="width: ${iconSize}px; height: ${iconSize}px; object-fit: contain; filter: brightness(0) invert(1);">`;
+                        bgColor = '#2563eb';
+                        iconBorderColor = '#fff';
+                    } else {
+                        // Green for RNIS
+                        innerIcon = `<img src="headset.png" style="width: ${iconSize}px; height: ${iconSize}px; object-fit: contain; filter: brightness(0) invert(1);">`;
+                        bgColor = '#10b981';
+                        iconBorderColor = '#fff';
+                    }
+
                     const iconHtml = `<div style="position: relative;">
                         ${crownIcon}
                         <div style="
                             width: 24px;
                             height: 24px;
-                            background: ${color};
+                            background: ${bgColor};
                             border-radius: 50%;
-                            border: 2px solid #fff;
+                            border: 2px solid ${iconBorderColor};
                             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
                             display: flex;
                             align-items: center;
@@ -572,7 +634,7 @@
                             color: white;
                             font-size: 14px;
                             ${animationStyle}">
-                            <i class="fa-solid fa-headset"></i>
+                            ${innerIcon}
                         </div>
                     </div>`;
 
