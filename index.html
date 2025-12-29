@@ -255,12 +255,20 @@
         }
 
         .legend-title {
-            margin-bottom: 15px;
+            margin-bottom: 5px;
             font-weight: 600;
             color: #1a365d;
             font-size: 1rem;
             text-align: center;
             letter-spacing: 0.5px;
+        }
+
+        .legend-subtitle {
+            font-size: 0.75rem;
+            color: #64748b;
+            text-align: center;
+            margin-bottom: 15px;
+            line-height: 1.4;
         }
 
         .legend-grid {
@@ -425,6 +433,58 @@
             background: white;
             color: currentColor;
             opacity: 0.8;
+        }
+
+        /* Mobile Legend Optimization */
+        .mobile-legend-toggle {
+            display: none;
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 1100;
+            background: white;
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: #1a365d;
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+
+        @media (max-width: 768px) {
+            .mobile-legend-toggle {
+                display: flex;
+            }
+
+            .legend {
+                top: 80px;
+                right: -320px;
+                /* Hidden by default */
+                transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                width: 280px;
+                max-height: calc(100vh - 100px);
+                overflow-y: auto;
+            }
+
+            .legend.mobile-active {
+                right: 20px;
+            }
+
+            .header {
+                max-width: 280px;
+                padding: 10px 15px;
+                top: 15px;
+                left: 15px;
+                font-size: 0.85rem;
+            }
+
+            .header h1 {
+                font-size: 1.1rem;
+            }
         }
 
         /* Feature Comparison Modal Styles */
@@ -634,7 +694,11 @@
 
     <div id="map"></div>
 
-    <div class="legend">
+    <div class="mobile-legend-toggle" onclick="toggleMobileLegend()">
+        <i class="fa-solid fa-layer-group"></i>
+    </div>
+
+    <div class="legend" id="mainLegend">
         <div class="legend-title">
             ระดับหน่วยปฏิบัติการอำนวยการ
             <div class="info-btn" onclick="openModal()" title="ความสามารถของ NDEMS ณ
@@ -642,6 +706,7 @@
                 <i class="fa-solid fa-info"></i>
             </div>
         </div>
+        <div class="legend-subtitle">คลิกที่ระดับปฏิบัติการเพื่อเปิด/ปิดการแสดงผล</div>
         <div class="legend-grid">
             <div class="filter-btn active rnis" onclick="toggleLayer('rnis', this)">
                 <div class="btn-content">
@@ -732,7 +797,8 @@
                         <td><i class="fa-solid fa-circle-xmark cross-icon"></i></td>
                     </tr>
                     <tr>
-                        <td>6. ระบบจัดการรายชื่อผู้แจ้ง/ผู้ป่วย และกลุ่มเปราะบาง</td>
+                        <td>6. มีระบบจัดการรายชื่อผู้แจ้ง/ผู้ป่วย เช่น มีระบบบันทึกข้อมูลผู้แจ้งเหตุฉุกเฉิน
+                            ผู้ป่วยกลุ่มเปราะบาง</td>
                         <td><i class="fa-solid fa-circle-check check-icon"></i></td>
                         <td><i class="fa-solid fa-circle-xmark cross-icon"></i></td>
                     </tr>
@@ -742,7 +808,8 @@
                         <td><i class="fa-solid fa-circle-xmark cross-icon"></i></td>
                     </tr>
                     <tr>
-                        <td>8. รายงานสถิติ (RNIS IQM) บันทึกระยะเวลาและเสียงสนทนา</td>
+                        <td>8. ระบบรายงานสถิติการรับแจ้งเหตุฉุกเฉิน (RNIS IQM) บันทึกระยะเวลาโทรเข้า-รับสาย-โทรออก
+                            มีระบบบันทึกเสียงการสนทนา</td>
                         <td><i class="fa-solid fa-circle-check check-icon"></i></td>
                         <td><i class="fa-solid fa-circle-xmark cross-icon"></i></td>
                     </tr>
@@ -757,12 +824,14 @@
                         <td><i class="fa-solid fa-circle-xmark cross-icon"></i></td>
                     </tr>
                     <tr>
-                        <td>11. ระบุตำแหน่งพิกัด GPS แม่นยำสูง (AML)</td>
+                        <td>11. รองรับเทคโนโลยีระบุตำแหน่งฉุกเฉินอัตโนมัติบนมือถือที่ส่งพิกัด GPS ความแม่นยำสูง หรือ AML
+                            : Advanced Mobile Lacation</td>
                         <td><i class="fa-solid fa-circle-check check-icon"></i></td>
                         <td><i class="fa-solid fa-circle-xmark cross-icon"></i></td>
                     </tr>
                     <tr>
-                        <td>12. รองรับศูนย์รับแจ้งเหตุสั่งการเสมือน (Virtual Dispatch Center)</td>
+                        <td>12. รองรับสถานการณ์ไม่ปกติและภัยพิบัติ เช่น ตั้งศูนย์รับแจ้งเหตุสั่งการเสมือน (Virtual
+                            Dispatch Center)</td>
                         <td><i class="fa-solid fa-circle-check check-icon"></i></td>
                         <td><i class="fa-solid fa-circle-xmark cross-icon"></i></td>
                     </tr>
@@ -792,6 +861,20 @@
             const modal = document.getElementById('comparisonModal');
             if (event.target == modal) {
                 closeModal();
+            }
+        }
+
+        function toggleMobileLegend() {
+            const legend = document.getElementById('mainLegend');
+            legend.classList.toggle('mobile-active');
+
+            const icon = document.querySelector('.mobile-legend-toggle i');
+            if (legend.classList.contains('mobile-active')) {
+                icon.classList.remove('fa-layer-group');
+                icon.classList.add('fa-xmark');
+            } else {
+                icon.classList.remove('fa-xmark');
+                icon.classList.add('fa-layer-group');
             }
         }
 
