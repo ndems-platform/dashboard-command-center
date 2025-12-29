@@ -188,6 +188,20 @@
             }
         }
 
+        @keyframes pulse-green {
+            0% {
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+            }
+
+            70% {
+                box-shadow: 0 0 0 15px rgba(16, 185, 129, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+            }
+        }
+
 
         /* Warning Popup */
         .leaflet-popup-content-wrapper {
@@ -376,6 +390,19 @@
             border: 2px solid white;
         }
 
+        .filter-btn.active.advisor {
+            background-color: #ecfdf5;
+            color: #065f46;
+            border: 2px solid #10b981;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+        }
+
+        .filter-btn.active.advisor .btn-icon {
+            background: #10b981 !important;
+            color: white;
+            border: 2px solid white;
+        }
+
         .btn-icon img.telephone-icon,
         .btn-icon img.headset-icon {
             filter: brightness(0) invert(1);
@@ -434,6 +461,14 @@
                     <span class="btn-label">ยกระดับเป็นดิจิทัล</span>
                 </div>
                 <span class="btn-count" id="count-rnis">0</span>
+            </div>
+
+            <div class="filter-btn active advisor" onclick="toggleLayer('advisor', this)">
+                <div class="btn-content">
+                    <div class="btn-icon"><i class="fa-solid fa-user-doctor" style="font-size: 18px;"></i></div>
+                    <span class="btn-label">ระดับที่ปรึกษา</span>
+                </div>
+                <span class="btn-count" id="count-advisor">0</span>
             </div>
 
             <div class="filter-btn active high" onclick="toggleLayer('high', this)">
@@ -557,7 +592,8 @@
         const layers = {
             'rnis': L.layerGroup().addTo(map),
             'high': L.layerGroup().addTo(map),
-            'basic': L.layerGroup().addTo(map)
+            'basic': L.layerGroup().addTo(map),
+            'advisor': L.layerGroup().addTo(map)
         };
 
         // Function to Toggle Layers
@@ -579,42 +615,38 @@
             let countRNIS = 0;
             let countHigh = 0;
             let countBasic = 0;
+            let countAdvisor = 0;
 
             commandCenters.forEach(center => {
                 if (center.lat && center.lng) {
+                    let color, animationName, targetLayer;
 
-                    // Count Logic
+                    // 1. Determine Category, Counts, and Base Styling
                     if (center.rnis) {
                         countRNIS++;
+                        targetLayer = layers['rnis'];
+                        color = '#d4a32f';
+                        animationName = 'pulse-gold';
                     } else if (center.level && center.level.includes('ระดับสูง')) {
                         countHigh++;
+                        targetLayer = layers['high'];
+                        color = '#ef4444';
+                        animationName = 'pulse-red';
+                    } else if (center.level === "ที่ปรึกษา") {
+                        countAdvisor++;
+                        targetLayer = layers['advisor'];
+                        color = '#10b981';
+                        animationName = 'pulse-green';
                     } else {
                         countBasic++;
-                    }
-
-                    // Determine Level, Color, and Group
-                    let color = '#000000'; // Black for Basic/High borders
-                    let animationName = 'pulse-gray';
-                    let targetLayer = layers['basic'];
-
-                    if (center.level) {
-                        if (center.rnis) {
-                            // RNIS is Gold
-                            targetLayer = layers['rnis'];
-                            color = '#d4a32f';
-                            animationName = 'pulse-gold';
-                        } else if (center.level.includes('ระดับสูง')) {
-                            targetLayer = layers['high'];
-                            color = '#ef4444';
-                            animationName = 'pulse-red';
-                        } else {
-                            color = '#2563eb';
-                            animationName = 'pulse-blue';
-                        }
+                        targetLayer = layers['basic'];
+                        color = '#2563eb';
+                        animationName = 'pulse-blue';
                     }
 
                     const animationStyle = `animation: ${animationName} 2s infinite;`;
 
+                    // 2. Prepare Icons
                     let crownIcon = '';
                     if (center.rnis) {
                         crownIcon = `<i class="fa-solid fa-crown" style="
@@ -630,34 +662,35 @@
                     }
 
                     let iconSize = 14;
-                    let innerIcon = `<img src="headset.png" style="width: ${iconSize}px; height: ${iconSize}px; object-fit: contain;">`;
-                    let bgColor = color;
-                    let iconBorderColor = '#fff';
+                    let innerIcon = '';
 
-                    if (!center.rnis) {
+                    if (center.level === "ที่ปรึกษา") {
+                        innerIcon = `<i class="fa-solid fa-user-doctor" style="font-size: 18px;"></i>`;
+                    } else if (!center.rnis) {
                         innerIcon = `<img src="telephone.png" style="width: ${iconSize}px; height: ${iconSize}px; object-fit: contain; filter: brightness(0) invert(1);">`;
                     } else {
                         innerIcon = `<img src="headset.png" style="width: ${iconSize}px; height: ${iconSize}px; object-fit: contain; filter: brightness(0) invert(1);">`;
                     }
 
-                    const iconHtml = `<div style="position: relative;">
-                        ${crownIcon}
-                        <div style="
-                            width: 24px;
-                            height: 24px;
-                            background: ${color};
-                            border-radius: 50%;
-                            border: 2px solid #fff;
-                            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-                            display: flex;
-                            align-items: center;
-                            justify-content: center;
-                            color: white;
-                            font-size: 14px;
-                            ${animationStyle}">
-                            ${innerIcon}
-                        </div>
-                    </div>`;
+                    const iconHtml = `
+                        <div style="position: relative;">
+                            ${crownIcon}
+                            <div style="
+                                width: 24px;
+                                height: 24px;
+                                background: ${color};
+                                border-radius: 50%;
+                                border: 2px solid #fff;
+                                box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                color: white;
+                                font-size: 14px;
+                                ${animationStyle}">
+                                ${innerIcon}
+                            </div>
+                        </div>`;
 
                     const customIcon = L.divIcon({
                         className: 'custom-div-icon',
@@ -666,6 +699,7 @@
                         iconAnchor: [14, 14]
                     });
 
+                    // 3. Create and Bind Marker
                     const marker = L.marker([center.lat, center.lng], { icon: customIcon });
 
                     const popupContent = `
@@ -682,9 +716,6 @@
                             <div class="info-row">
                                 <span class="info-label">ระดับ:</span> <span class="info-value">${center.level}</span>
                             </div>
-                            <div style="margin-top: 10px; font-size: 0.8rem; text-align: right; color: #64748b;">
-                                ID: ${center.id || 'N/A'}
-                            </div>
                         </div>
                     `;
 
@@ -694,9 +725,10 @@
             });
 
             // Update Legend Counts
-            document.getElementById('count-rnis').innerText = `${countRNIS}`;
-            document.getElementById('count-high').innerText = `${countHigh}`;
-            document.getElementById('count-basic').innerText = `${countBasic}`;
+            document.getElementById('count-rnis').innerText = countRNIS;
+            document.getElementById('count-advisor').innerText = countAdvisor;
+            document.getElementById('count-high').innerText = countHigh;
+            document.getElementById('count-basic').innerText = countBasic;
         }
 
 
