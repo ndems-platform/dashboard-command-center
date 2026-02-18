@@ -342,7 +342,6 @@ const commandCenters = [
     "province": "พิษณุโลก",
     "type": "หน่วยปฏิบัติการอำนวยการ",
     "level": "ระดับสูง",
-    "rnis": true,
     "lat": 16.80894167,
     "lng": 100.2638785
   },
