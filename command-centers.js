@@ -480,6 +480,7 @@ const commandCenters = [
     "province": "ลำพูน",
     "type": "หน่วยปฏิบัติการอำนวยการ",
     "level": "ระดับพื้นฐาน",
+    "rnis": true,
     "lat": 18.53263679,
     "lng": 99.02316335
   },
