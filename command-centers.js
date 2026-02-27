@@ -4,6 +4,7 @@ const commandCenters = [
     "province": "กระบี่",
     "type": "หน่วยปฏิบัติการอำนวยการ",
     "level": "ระดับพื้นฐาน",
+    "rnis": true,
     "lat": 8.060682823,
     "lng": 98.90516117
   },
