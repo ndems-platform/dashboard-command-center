@@ -367,6 +367,7 @@ const commandCenters = [
     "province": "แพร่",
     "type": "หน่วยปฏิบัติการอำนวยการ",
     "level": "ระดับพื้นฐาน",
+    "rnis": true,
     "lat": 18.1159898,
     "lng": 99.4828205
   },
