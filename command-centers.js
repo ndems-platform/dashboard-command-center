@@ -222,6 +222,7 @@ const commandCenters = [
     "province": "นนทบุรี",
     "type": "หน่วยปฏิบัติการอำนวยการ",
     "level": "ระดับพื้นฐาน",
+    "rnis": true,
     "lat": 13.84378897,
     "lng": 100.5078928
   },
