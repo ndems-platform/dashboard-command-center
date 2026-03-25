@@ -182,6 +182,7 @@ const commandCenters = [
     "province": "นครปฐม",
     "type": "หน่วยปฏิบัติการอำนวยการ",
     "level": "ระดับสูง",
+    "rnis": true,
     "lat": 13.81929424,
     "lng": 100.0760508
   },
