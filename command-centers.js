@@ -353,6 +353,7 @@ const commandCenters = [
     "province": "เพชรบุรี",
     "type": "หน่วยปฏิบัติการอำนวยการ",
     "level": "ระดับพื้นฐาน",
+    "rnis": true,
     "lat": 13.1184386,
     "lng": 99.9379894
   },
