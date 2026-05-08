@@ -297,6 +297,7 @@ const commandCenters = [
     "province": "ปัตตานี",
     "type": "หน่วยปฏิบัติการอำนวยการ",
     "level": "ระดับพื้นฐาน",
+    "rnis": true,
     "lat": 6.868475,
     "lng": 101.2471199
   },
