@@ -331,7 +331,7 @@ const commandCenters = [
     "province": "พัทลุง",
     "type": "หน่วยปฏิบัติการอำนวยการ",
     "level": "ระดับพื้นฐาน",
-    "target": true,
+    "rnis": true,
     "lat": 7.6177011,
     "lng": 100.0709114
   },
@@ -423,6 +423,7 @@ const commandCenters = [
     "province": "ยะลา",
     "type": "หน่วยปฏิบัติการอำนวยการ",
     "level": "ระดับสูง",
+    "rnis": true,
     "lat": 6.547793459,
     "lng": 101.2770409
   },
