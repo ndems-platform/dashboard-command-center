@@ -351,38 +351,36 @@
             border: 2px solid white;
         }
 
-        .filter-btn.active.high {
+        .filter-btn.active.hospital {
             background-color: #fef2f2;
             color: #991b1b;
             border: 2px solid #ef4444;
         }
 
-        .filter-btn.active.high .btn-icon {
+        .filter-btn.active.hospital .btn-icon {
             background: #ef4444 !important;
             border: 2px solid white;
         }
 
-        .filter-btn.active.basic {
+        .filter-btn.active.pao {
             background-color: #eff6ff;
             color: #1e40af;
             border: 2px solid #2563eb;
         }
 
-        .filter-btn.active.basic .btn-icon {
+        .filter-btn.active.pao .btn-icon {
             background: #2563eb !important;
             border: 2px solid white;
         }
 
-        .filter-btn.active.advisor {
+        .filter-btn.active.bma {
             background-color: #ecfdf5;
             color: #065f46;
             border: 2px solid #10b981;
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
         }
 
-        .filter-btn.active.advisor .btn-icon {
+        .filter-btn.active.bma .btn-icon {
             background: #10b981 !important;
-            color: white;
             border: 2px solid white;
         }
 
@@ -457,15 +455,25 @@
             }
 
             .header {
-                max-width: 280px;
-                padding: 10px 15px;
-                top: 15px;
-                left: 15px;
-                font-size: 0.85rem;
+                max-width: calc(100vw - 80px);
+                padding: 8px 12px;
+                top: 10px;
+                left: 10px;
+                gap: 10px;
+            }
+
+            .header img {
+                height: 35px;
             }
 
             .header h1 {
-                font-size: 1.1rem;
+                font-size: 0.95rem;
+                margin-bottom: 2px;
+            }
+            
+            .header p {
+                font-size: 0.75rem;
+                display: none; /* Hide subtitle on mobile to save space */
             }
         }
 
@@ -685,7 +693,10 @@
     <div class="header">
         <img src="logo-200.png" alt="NIEMS Logo">
         <div class="header-text">
-            <h1>หน่วยปฏิบัติการอำนวยการ</h1>
+            <h1 style="line-height: 1.2;">
+                หน่วยปฏิบัติการอำนวยการ
+                <span style="display: block; font-size: 0.8em; font-weight: 500; color: #475569; margin-top: 2px;">(ศูนย์รับแจ้งเหตุและสั่งการ)</span>
+            </h1>
             <p>สถาบันการแพทย์ฉุกเฉินแห่งชาติ (สพฉ.)</p>
         </div>
     </div>
@@ -725,28 +736,28 @@
                 <span class="btn-count" id="count-rnis">0</span>
             </div>
 
-            <div class="filter-btn active advisor" onclick="toggleLayer('advisor', this)">
+            <div class="filter-btn active hospital" onclick="toggleLayer('hospital', this)">
                 <div class="btn-content">
-                    <div class="btn-icon"><i class="fa-solid fa-user-doctor" style="font-size: 18px;"></i></div>
-                    <span class="btn-label">ระดับที่ปรึกษา</span>
+                    <div class="btn-icon"><img src="headset.png" alt="Headset" class="headset-icon" style="width: 16px; height: 16px;"></div>
+                    <span class="btn-label">โรงพยาบาล</span>
                 </div>
-                <span class="btn-count" id="count-advisor">0</span>
+                <span class="btn-count" id="count-hospital">0</span>
             </div>
 
-            <div class="filter-btn active high" onclick="toggleLayer('high', this)">
+            <div class="filter-btn active pao" onclick="toggleLayer('pao', this)">
                 <div class="btn-content">
-                    <div class="btn-icon"><img src="telephone.png" alt="Telephone" class="telephone-icon"></div>
-                    <span class="btn-label">ระดับสูง</span>
+                    <div class="btn-icon"><img src="headset.png" alt="Headset" class="headset-icon" style="width: 16px; height: 16px;"></div>
+                    <span class="btn-label">องค์การบริหารส่วนจังหวัด</span>
                 </div>
-                <span class="btn-count" id="count-high">0</span>
+                <span class="btn-count" id="count-pao">0</span>
             </div>
 
-            <div class="filter-btn active basic" onclick="toggleLayer('basic', this)">
+            <div class="filter-btn active bma" onclick="toggleLayer('bma', this)">
                 <div class="btn-content">
-                    <div class="btn-icon"><img src="telephone.png" alt="Telephone" class="telephone-icon"></div>
-                    <span class="btn-label">ระดับพื้นฐาน</span>
+                    <div class="btn-icon"><img src="headset.png" alt="Headset" class="headset-icon" style="width: 16px; height: 16px;"></div>
+                    <span class="btn-label">สำนักการแพทย์ กทม.</span>
                 </div>
-                <span class="btn-count" id="count-basic">0</span>
+                <span class="btn-count" id="count-bma">0</span>
             </div>
         </div>
     </div>
@@ -973,9 +984,9 @@
         // Layer Groups for Filtering
         const layers = {
             'rnis': L.layerGroup().addTo(map),
-            'high': L.layerGroup().addTo(map),
-            'basic': L.layerGroup().addTo(map),
-            'advisor': L.layerGroup().addTo(map)
+            'hospital': L.layerGroup().addTo(map),
+            'pao': L.layerGroup().addTo(map),
+            'bma': L.layerGroup().addTo(map)
         };
 
         // Function to Toggle Layers
@@ -995,9 +1006,9 @@
         // Command Center Data is loaded from command-centers.js
         if (typeof commandCenters !== 'undefined' && Array.isArray(commandCenters)) {
             let countRNIS = 0;
-            let countHigh = 0;
-            let countBasic = 0;
-            let countAdvisor = 0;
+            let countHospital = 0;
+            let countPAO = 0;
+            let countBMA = 0;
 
             commandCenters.forEach(center => {
                 if (center.lat && center.lng) {
@@ -1009,20 +1020,20 @@
                         targetLayer = layers['rnis'];
                         color = '#d4a32f';
                         animationName = 'pulse-gold';
-                    } else if (center.level && center.level.includes('ระดับสูง')) {
-                        countHigh++;
-                        targetLayer = layers['high'];
-                        color = '#ef4444';
+                    } else if (center.orgType === "โรงพยาบาล") {
+                        countHospital++;
+                        targetLayer = layers['hospital'];
+                        color = '#ef4444'; // Red
                         animationName = 'pulse-red';
-                    } else if (center.level === "ที่ปรึกษา") {
-                        countAdvisor++;
-                        targetLayer = layers['advisor'];
-                        color = '#10b981';
+                    } else if (center.orgType === "สำนักการแพทย์ กทม.") {
+                        countBMA++;
+                        targetLayer = layers['bma'];
+                        color = '#10b981'; // Green
                         animationName = 'pulse-green';
                     } else {
-                        countBasic++;
-                        targetLayer = layers['basic'];
-                        color = '#2563eb';
+                        countPAO++;
+                        targetLayer = layers['pao'];
+                        color = '#2563eb'; // Blue
                         animationName = 'pulse-blue';
                     }
 
@@ -1046,13 +1057,7 @@
                     let iconSize = 14;
                     let innerIcon = '';
 
-                    if (center.level === "ที่ปรึกษา") {
-                        innerIcon = `<i class="fa-solid fa-user-doctor" style="font-size: 18px;"></i>`;
-                    } else if (!center.rnis) {
-                        innerIcon = `<img src="telephone.png" style="width: ${iconSize}px; height: ${iconSize}px; object-fit: contain; filter: brightness(0) invert(1);">`;
-                    } else {
-                        innerIcon = `<img src="headset.png" style="width: ${iconSize}px; height: ${iconSize}px; object-fit: contain; filter: brightness(0) invert(1);">`;
-                    }
+                    innerIcon = `<img src="headset.png" style="width: ${iconSize}px; height: ${iconSize}px; object-fit: contain; filter: brightness(0) invert(1);">`;
 
                     const iconHtml = `
                         <div style="position: relative;">
@@ -1101,7 +1106,7 @@
                                 <span class="info-label">ประเภท:</span> <span class="info-value">${center.type}</span>
                             </div>
                             <div class="info-row">
-                                <span class="info-label">ระดับ:</span> <span class="info-value">${center.level}</span>
+                                <span class="info-label">สังกัด:</span> <span class="info-value">${center.orgType}</span>
                             </div>
                             ${branchRow}
                         </div>
@@ -1114,9 +1119,9 @@
 
             // Update Legend Counts
             document.getElementById('count-rnis').innerText = countRNIS;
-            document.getElementById('count-advisor').innerText = countAdvisor;
-            document.getElementById('count-high').innerText = countHigh;
-            document.getElementById('count-basic').innerText = countBasic;
+            document.getElementById('count-hospital').innerText = countHospital;
+            document.getElementById('count-pao').innerText = countPAO;
+            document.getElementById('count-bma').innerText = countBMA;
         }
 
 
