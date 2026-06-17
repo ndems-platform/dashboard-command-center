@@ -485,6 +485,7 @@ const commandCenters = [
     "province": "จันทบุรี",
     "type": "หน่วยปฏิบัติการอำนวยการ",
     "orgType": "โรงพยาบาล",
+    "rnis": true,
     "lat": 12.60370395,
     "lng": 102.1017583
   },
