@@ -469,6 +469,7 @@ const commandCenters = [
     "province": "ชลบุรี",
     "type": "หน่วยปฏิบัติการอำนวยการ",
     "orgType": "โรงพยาบาล",
+    "rnis": true,
     "lat": 13.35217409,
     "lng": 100.9830852
   },
