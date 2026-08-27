@@ -682,16 +682,19 @@
         /* Marker Labels for Zoom */
         .leaflet-tooltip.center-label {
             background-color: rgba(255, 255, 255, 0.95);
-            border: 1px solid #cbd5e1;
-            border-radius: 6px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            color: #0f172a;
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            border-radius: 20px;
+            padding: 6px 14px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            color: #1e293b;
             font-family: 'Prompt', sans-serif;
-            font-size: 0.75rem;
-            font-weight: 600;
+            font-size: 0.8rem;
+            font-weight: 500;
+            letter-spacing: 0.2px;
             visibility: hidden;
             opacity: 0;
-            transition: opacity 0.3s, visibility 0.3s;
+            transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             white-space: nowrap;
         }
 
@@ -700,8 +703,8 @@
             opacity: 1;
         }
         
-        .leaflet-tooltip-bottom.center-label::before {
-            border-bottom-color: #cbd5e1;
+        .leaflet-tooltip.center-label::before {
+            display: none !important;
         }
 
         @media (max-width: 600px) {
