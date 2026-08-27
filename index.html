@@ -30,6 +30,14 @@
             z-index: 1;
         }
 
+        .leaflet-container {
+            background-color: #ffffff !important;
+        }
+
+        .osm-light-theme {
+            filter: grayscale(100%) opacity(50%) brightness(110%) contrast(90%);
+        }
+
         .header {
             position: absolute;
             top: 20px;
@@ -671,6 +679,31 @@
             border: 1px solid #cbd5e1;
         }
 
+        /* Marker Labels for Zoom */
+        .leaflet-tooltip.center-label {
+            background-color: rgba(255, 255, 255, 0.95);
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            color: #0f172a;
+            font-family: 'Prompt', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 600;
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.3s, visibility 0.3s;
+            white-space: nowrap;
+        }
+
+        .show-labels .leaflet-tooltip.center-label {
+            visibility: visible;
+            opacity: 1;
+        }
+        
+        .leaflet-tooltip-bottom.center-label::before {
+            border-bottom-color: #cbd5e1;
+        }
+
         @media (max-width: 600px) {
             .modal-content {
                 padding: 20px;
@@ -902,11 +935,20 @@
             position: 'bottomright'
         }).addTo(map);
 
-        // Light Theme Base Map (CartoDB Positron)
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-            subdomains: 'abcd',
-            maxZoom: 19
+        // Toggle labels on zoom
+        map.on('zoomend', function() {
+            if (map.getZoom() >= 8) {
+                document.getElementById('map').classList.add('show-labels');
+            } else {
+                document.getElementById('map').classList.remove('show-labels');
+            }
+        });
+
+        // Standard OpenStreetMap Base Map
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+            maxZoom: 19,
+            className: 'osm-light-theme'
         }).addTo(map);
 
         // Load Thailand Provinces GeoJSON
@@ -1088,6 +1130,14 @@
 
                     // 3. Create and Bind Marker
                     const marker = L.marker([center.lat, center.lng], { icon: customIcon });
+
+                    // Add permanent tooltip for zoomed-in view
+                    marker.bindTooltip(center.name, { 
+                        permanent: true, 
+                        direction: 'bottom', 
+                        className: 'center-label',
+                        offset: [0, 15]
+                    });
 
                     const branchRow = center.branch ? `
                         <div class="info-row">
